@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A premium, interactive stopwatch web application featuring precise lap time tracking, real-time analytics dashboard, modern glassmorphism styling, multiple vibrant themes, custom synthesizer audio feedback, and keyboard shortcut support.">
+  <meta name="author" content="Stopwatch">
+  <title>Stopwatch - Precision Timer & Lap Analytics</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-midnight">
+  <div class="background-decor animate-bg"></div>
+  <div class="background-decor-2 animate-bg-2"></div>
+
+  <main class="app-container">
+    <!-- Main Glassmorphic Panel -->
+    <section class="stopwatch-card" aria-label="Stopwatch Center">
+      
+      <!-- Top Actions Bar: Themes & Sound Settings -->
+      <header class="top-bar">
+        <div class="logo">
+          <span class="logo-dot"></span>
+          <h1>Stopwatch</h1>
+        </div>
+        
+        <div class="header-actions">
+          <!-- Audio Toggle Button -->
+          <button id="btn-sound-toggle" class="icon-btn tooltip" aria-label="Toggle Sound Effects" data-tooltip="Toggle sound">
+            <svg class="lucide lucide-volume-2 icon-sound-on" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+            <svg class="lucide lucide-volume-x icon-sound-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>
+          </button>
+
+          <!-- Themes Dropdown/Selector -->
+          <div class="theme-selector-container">
+            <button id="btn-theme-menu" class="theme-menu-btn" aria-label="Change Theme" aria-haspopup="true">
+              <span class="current-theme-indicator"></span>
+              <span class="btn-text">Themes</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div id="theme-dropdown" class="theme-dropdown hidden">
+              <button class="theme-opt active" data-theme="midnight" aria-label="Midnight theme">
+                <span class="theme-dot midnight"></span> Midnight Glow
+              </button>
+              <button class="theme-opt" data-theme="cyberpunk" aria-label="Cyberpunk theme">
+                <span class="theme-dot cyberpunk"></span> Cyberpunk Neon
+              </button>
+              <button class="theme-opt" data-theme="emerald" aria-label="Emerald theme">
+                <span class="theme-dot emerald"></span> Emerald Glass
+              </button>
+              <button class="theme-opt" data-theme="sunset" aria-label="Sunset theme">
+                <span class="theme-dot sunset"></span> Sunset Rose
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Circular Timer visualizer -->
+      <div class="timer-visual-container">
+        <!-- SVG Progress Circle -->
+        <svg class="progress-ring" width="260" height="260" viewBox="0 0 260 260">
+          <defs>
+            <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--accent-glow-start)" />
+              <stop offset="100%" stop-color="var(--accent-glow-end)" />
+            </linearGradient>
+            <filter id="glow-effect" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <!-- Background track -->
+          <circle class="ring-track" cx="130" cy="130" r="115" />
+          <!-- Animated sweeping ring -->
+          <circle id="progress-indicator" class="ring-indicator" cx="130" cy="130" r="115" stroke="url(#ring-gradient)" />
+        </svg>
+
+        <!-- Centered Timer Text -->
+        <div class="timer-digital-display">
+          <div id="time-main" class="time-main" aria-live="polite">00:00:00</div>
+          <div id="time-ms" class="time-ms">.00</div>
+        </div>
+      </div>
+
+      <!-- Control Button Actions -->
+      <div class="control-actions">
+        <button id="btn-reset" class="control-btn btn-secondary" aria-label="Reset timer" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Reset</span>
+        </button>
+
+        <button id="btn-play-pause" class="control-btn btn-primary" aria-label="Start stopwatch">
+          <!-- Play icon (shown by default) -->
+          <svg id="icon-play" class="lucide icon-action" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <!-- Pause icon (hidden by default) -->
+          <svg id="icon-pause" class="lucide icon-action hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></svg>
+          <span id="label-play-pause">Start</span>
+        </button>
+
+        <button id="btn-lap" class="control-btn btn-secondary" aria-label="Record lap time" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Lap</span>
+        </button>
+      </div>
+
+      <!-- Real-time Stats Grid -->
+      <section class="stats-section" aria-label="Stopwatch Statistics">
+        <h2 class="section-title">Live Analytics</h2>
+        <div class="stats-grid">
+          <div class="stat-card" id="stat-laps">
+            <span class="stat-label">Total Laps</span>
+            <span class="stat-value" id="val-total-laps">0</span>
+          </div>
+          <div class="stat-card" id="stat-avg">
+            <span class="stat-label">Avg Lap Time</span>
+            <span class="stat-value font-mono" id="val-avg-lap">--:--.--</span>
+          </div>
+          <div class="stat-card border-fastest" id="stat-fastest">
+            <span class="stat-label txt-fastest">Fastest Lap</span>
+            <span class="stat-value txt-fastest font-mono" id="val-fastest-lap">--:--.--</span>
+          </div>
+          <div class="stat-card border-slowest" id="stat-slowest">
+            <span class="stat-label txt-slowest">Slowest Lap</span>
+            <span class="stat-value txt-slowest font-mono" id="val-slowest-lap">--:--.--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lap Times History Table -->
+      <section class="laps-section" aria-label="Lap History">
+        <div class="laps-header">
+          <h2 class="section-title">Laps History</h2>
+          <span class="laps-count-badge" id="laps-count">No Laps</span>
+        </div>
+        <div class="laps-table-wrapper" id="laps-table-wrapper">
+          <table class="laps-table" id="laps-table">
+            <thead>
+              <tr>
+                <th scope="col">Lap</th>
+                <th scope="col">Lap Time</th>
+                <th scope="col">Split Time</th>
+              </tr>
+            </thead>
+            <tbody id="laps-list">
+              <!-- Dynamically populated via JS -->
+              <tr class="empty-state-row">
+                <td colspan="3" class="empty-state">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <p>Start the stopwatch and record laps to visualize data</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Keyboard Shortcuts Info Panel -->
+      <footer class="app-footer">
+        <div class="shortcuts-legend">
+          <span class="shortcut"><kbd>Space</kbd> Start / Pause</span>
+          <span class="shortcut"><kbd>L</kbd> Lap</span>
+          <span class="shortcut"><kbd>R</kbd> Reset</span>
+        </div>
+      </footer>
+
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

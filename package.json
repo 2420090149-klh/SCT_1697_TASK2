@@ -1,0 +1,14 @@
+{
+  "name": "stopwatch",
+  "version": "1.0.0",
+  "description": "Premium glassmorphic stopwatch with advanced analytics, sound synthesis, and keyboard shortcuts.",
+  "scripts": {
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.2.11"
+  }
+}
